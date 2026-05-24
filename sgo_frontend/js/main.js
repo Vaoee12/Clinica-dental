@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarSucursales();
   cargarOdontologos();
   cargarConsultorios();
+
+  cargarHistorial();
+  cargarConvenios();
+  cargarPagosMensuales();
+  cargarTratamientosSucursal();
 });
 
 function configurarNavegacion() {
@@ -279,5 +284,155 @@ async function eliminarConsultorio(idSucursal, numCos) {
     await cargarDashboard();
   } catch (error) {
     mostrarToast(error.message);
+  }
+
+}
+
+// ==========================================
+// HISTORIAL CLÍNICO
+// ==========================================
+
+async function cargarHistorial() {
+  const tbody = document.getElementById("tablaHistorial");
+
+  if (!tbody) return;
+
+  try {
+    const historial = await api.get("/historial");
+
+    tbody.innerHTML = historial.length ? historial.map(h => `
+      <tr>
+        <td>${h.nombre_afiliado}</td>
+        <td>${h.tratamiento}</td>
+        <td>$${h.costo}</td>
+        <td>${h.sucursal}</td>
+        <td>${h.direccion}</td>
+        <td>${h.fecha_inicio}</td>
+        <td>${h.fecha_fin}</td>
+      </tr>
+    `).join("") : `
+      <tr>
+        <td colspan="7" class="text-center">No hay historial clínico registrado.</td>
+      </tr>
+    `;
+
+  } catch (error) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="text-danger text-center">
+          No se pudo cargar el historial clínico.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+
+// ==========================================
+// CONVENIOS
+// ==========================================
+
+async function cargarConvenios() {
+  const tbody = document.getElementById("tablaConvenios");
+
+  if (!tbody) return;
+
+  try {
+    const convenios = await api.get("/convenios");
+
+    tbody.innerHTML = convenios.length ? convenios.map(c => `
+      <tr>
+        <td>${c.nombre_convenio}</td>
+        <td>${c.porcentaje_rebaja}%</td>
+      </tr>
+    `).join("") : `
+      <tr>
+        <td colspan="2" class="text-center">No hay convenios registrados.</td>
+      </tr>
+    `;
+
+  } catch (error) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="2" class="text-danger text-center">
+          No se pudieron cargar los convenios.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+
+// ==========================================
+// REPORTE: PAGOS MENSUALES
+// ==========================================
+
+async function cargarPagosMensuales() {
+  const tbody = document.getElementById("tablaPagosMensuales");
+
+  if (!tbody) return;
+
+  try {
+    const pagos = await api.get("/reportes/pagos-mensuales");
+
+    tbody.innerHTML = pagos.length ? pagos.map(p => `
+      <tr>
+        <td>${p.numero_asociado}</td>
+        <td>${p.anio}</td>
+        <td>${p.mes}</td>
+        <td>$${p.monto_total}</td>
+      </tr>
+    `).join("") : `
+      <tr>
+        <td colspan="4" class="text-center">No hay pagos mensuales registrados.</td>
+      </tr>
+    `;
+
+  } catch (error) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" class="text-danger text-center">
+          No se pudo cargar el reporte de pagos mensuales.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+
+// ==========================================
+// REPORTE: TRATAMIENTOS POR SUCURSAL
+// ==========================================
+
+async function cargarTratamientosSucursal() {
+  const tbody = document.getElementById("tablaTratamientosSucursal");
+
+  if (!tbody) return;
+
+  try {
+    const tratamientos = await api.get("/reportes/tratamientos-sucursal");
+
+    tbody.innerHTML = tratamientos.length ? tratamientos.map(t => `
+      <tr>
+        <td>${t.id_sucursal}</td>
+        <td>${t.sucursal}</td>
+        <td>${t.direccion}</td>
+        <td>${t.tratamiento}</td>
+        <td>$${t.costo}</td>
+      </tr>
+    `).join("") : `
+      <tr>
+        <td colspan="5" class="text-center">No hay tratamientos registrados por sucursal.</td>
+      </tr>
+    `;
+
+  } catch (error) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="text-danger text-center">
+          No se pudo cargar el reporte de tratamientos por sucursal.
+        </td>
+      </tr>
+    `;
   }
 }
