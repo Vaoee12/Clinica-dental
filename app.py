@@ -30,6 +30,39 @@ def get_db_connection():
 def index():
     return jsonify({"mensaje": "¡API del Sistema SGO jalando al 100!"})
 
+# ==========================================
+# MANEJO DE AUTENTICACIÓN BÁSICA (LOGIN)
+# ==========================================
+
+# Endpoint para inicio de sesión (POST)
+@app.route('/login', methods=['POST'])
+def login():
+    try:
+        datos = request.json
+        usuario = datos.get('usuario')
+        password = datos.get('password')
+        
+        # 1. Validamos que el frontend nos mande ambos datos
+        if not usuario or not password:
+            return jsonify({"error": "Faltan credenciales (usuario y password requeridos)"}), 400
+            
+        # 2. Autenticación básica: validamos contra el administrador del sistema
+        if usuario == 'admin' and password == 'admin123':
+            # Si pasa, le devolvemos un JSON de éxito con un token simulado
+            return jsonify({
+                "mensaje": "¡Login exitoso!",
+                "usuario": usuario,
+                "rol": "Administrador",
+                "token": "token-simulado-sgo-admin-999" 
+            }), 200
+        else:
+            # Si se equivoca, devolvemos el código 401 (No Autorizado)
+            return jsonify({"error": "Credenciales incorrectas. Acceso denegado."}), 401
+            
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # Tu endpoint del CRUD
 @app.route('/sucursales', methods=['GET'])
 def obtener_sucursales():
