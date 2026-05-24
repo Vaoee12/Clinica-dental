@@ -568,6 +568,121 @@ def eliminar_consultorio(id_sucursal, num_cos):
             "detalle": str(e)
         }), 500
 
+# ==========================================
+# ENDPOINTS FALTANTES (HISTORIAL Y CONVENIOS)
+# ==========================================
+
+# Endpoint para OBTENER el historial clínico (GET)
+@app.route('/historial', methods=['GET'])
+def obtener_historial():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Usamos la vista 'afiliado_tratamiento' que ya junta paciente, tratamiento, costo y fechas
+        cursor.execute('SELECT NOMBRE_AFILIADO, Nombre_tratamiento, Costo, Sucursal, DIRECCION, FECHA_IT, FECHA_FT FROM afiliado_tratamiento;')
+        historial = cursor.fetchall()
+        
+        lista_historial = []
+        for reg in historial:
+            lista_historial.append({
+                "nombre_afiliado": reg[0],
+                "tratamiento": reg[1],
+                "costo": float(reg[2]),
+                "sucursal": reg[3],
+                "direccion": reg[4],
+                "fecha_inicio": str(reg[5]),
+                "fecha_fin": str(reg[6])
+            })
+            
+        cursor.close()
+        conn.close()
+        return jsonify(lista_historial), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Endpoint para OBTENER los convenios y rebajas (GET)
+@app.route('/convenios', methods=['GET'])
+def obtener_convenios():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Usamos la vista 'rebaja_afiliado'
+        cursor.execute('SELECT NOMBRE_CONVENIO, "REBAJA[%]" FROM rebaja_afiliado;')
+        convenios = cursor.fetchall()
+        
+        lista_convenios = []
+        for conv in convenios:
+            lista_convenios.append({
+                "nombre_convenio": conv[0],
+                "porcentaje_rebaja": conv[1]
+            })
+            
+        cursor.close()
+        conn.close()
+        return jsonify(lista_convenios), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ==========================================
+# REPORTES SOLICITADOS POR FRONTEND
+# ==========================================
+
+# Endpoint para pagos mensuales por afiliado
+@app.route('/reportes/pagos-mensuales', methods=['GET'])
+def reporte_pagos_mensuales():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Usamos la vista 'pagos_mensuales_afiliados'
+        cursor.execute('SELECT NUMERO_ASOCIADO, ANO, MES, MONTO_TOTAL FROM pagos_mensuales_afiliados;')
+        reporte = cursor.fetchall()
+        
+        resultado = []
+        for reg in reporte:
+            resultado.append({
+                "numero_asociado": reg[0],
+                "anio": int(reg[1]),
+                "mes": int(reg[2]),
+                "monto_total": float(reg[3])
+            })
+            
+        cursor.close()
+        conn.close()
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Endpoint para tratamientos y costos por sucursal
+@app.route('/reportes/tratamientos-sucursal', methods=['GET'])
+def reporte_tratamientos_sucursal():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Usamos la vista 'vista_sucursales_tratamientos'
+        cursor.execute('SELECT ID_SUCURSAL, SUCURSAL, DIRECCION, TRATAMIENTO, COSTO FROM vista_sucursales_tratamientos;')
+        reporte = cursor.fetchall()
+        
+        resultado = []
+        for reg in reporte:
+            resultado.append({
+                "id_sucursal": reg[0],
+                "sucursal": reg[1],
+                "direccion": reg[2],
+                "tratamiento": reg[3],
+                "costo": float(reg[4])
+            })
+            
+        cursor.close()
+        conn.close()
+        return jsonify(resultado), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     # Arranca el servidor en el puerto 5000
