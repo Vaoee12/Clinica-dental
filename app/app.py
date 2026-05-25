@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app) 
 
 # Credenciales de tu Docker
-DB_HOST = "localhost"
+DB_HOST = "postgres"
 DB_NAME = "clinicadental"
 DB_USER = "admin"
 DB_PASS = "admin123"
@@ -686,4 +686,4 @@ def reporte_tratamientos_sucursal():
 
 if __name__ == '__main__':
     # Arranca el servidor en el puerto 5000
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', port=5000)

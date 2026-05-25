@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
 
+
   postgres:
     image: postgres:16
 
@@ -20,6 +21,34 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./db:/docker-entrypoint-initdb.d
+
+
+  app:
+    build: ./app
+
+    container_name: clinica_backend
+
+    restart: always
+
+    ports:
+      - "5000:5000"
+
+    depends_on:
+      - postgres
+
+
+  frontend:
+    build: ./sgo_frontend
+
+    container_name: clinica_frontend
+
+    restart: always
+
+    ports:
+      - "80:80"
+
+    depends_on:
+      - app
 
 volumes:
   postgres_data:
