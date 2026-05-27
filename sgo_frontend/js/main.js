@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarTratamientosSucursal();
 });
 
+
 function configurarNavegacion() {
   document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -83,8 +84,25 @@ async function cargarDashboard() {
   }
 }
 
+// ==========================================
+// PACIENTES
+// ==========================================
+
 async function guardarPaciente(event) {
   event.preventDefault();
+
+  const form = event.target;
+
+  if (!form.checkValidity()) {
+    event.stopPropagation();
+    form.classList.add("was-validated");
+    mostrarToast("Revisa los campos marcados en rojo.");
+    return;
+  }
+
+
+  form.classList.remove("was-validated");
+
   const paciente = {
     num_a: Number(document.getElementById("p_num_a").value),
     tipoafiliado: document.getElementById("p_tipoafiliado").value,
@@ -96,10 +114,11 @@ async function guardarPaciente(event) {
     monto_mensual: Number(document.getElementById("p_monto_mensual").value),
     telefono: Number(document.getElementById("p_telefono").value),
   };
+
   try {
     const data = await api.post("/pacientes", paciente);
     mostrarToast(data.mensaje || "Paciente guardado");
-    event.target.reset();
+    form.reset(); // Limpia el formulario
     await cargarPacientes();
     await cargarDashboard();
   } catch (error) {

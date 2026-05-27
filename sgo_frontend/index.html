@@ -70,19 +70,68 @@
       <section id="pacientes" class="section d-none">
         <div class="page-header"><h2>Registro de pacientes</h2></div>
         <div class="form-card">
-          <form id="formPaciente">
+          <form id="formPaciente" class="needs-validation" novalidate>
             <div class="row">
-              <div class="col-md-3 mb-3"><label class="form-label">Núm. afiliado</label><input id="p_num_a" type="number" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Tipo afiliado</label><select id="p_tipoafiliado" class="form-select" required><option value="INDIVIDUAL">Individual</option><option value="GRUPAL">Grupal</option></select></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Costo afiliación</label><input id="p_costo_m" type="number" step="0.01" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Cédula paciente</label><input id="p_id_cedula" type="number" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Nombre</label><input id="p_nomp" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Apellido paterno</label><input id="p_app" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Apellido materno</label><input id="p_amp" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Monto mensual</label><input id="p_monto_mensual" type="number" step="0.01" class="form-control" required></div>
-              <div class="col-md-3 mb-3"><label class="form-label">Teléfono</label><input id="p_telefono" type="number" class="form-control" required></div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Núm. afiliado</label>
+                <input id="p_num_a" type="text" class="form-control" pattern="^[0-9]{6}$" maxlength="6" required>
+                <div class="invalid-feedback">Debe ser de exactamente 6 dígitos (ej. 200001).</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Tipo afiliado</label>
+                <select id="p_tipoafiliado" class="form-select" required>
+                  <option value="">Selecciona uno...</option>
+                  <option value="INDIVIDUAL">Individual</option>
+                  <option value="GRUPAL">Grupal</option>
+                </select>
+                <div class="invalid-feedback">Debes seleccionar el tipo de afiliado.</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Costo afiliación</label>
+                <input id="p_costo_m" type="number" step="0.01" min="0" max="9999.99" class="form-control" required>
+                <div class="invalid-feedback">Ingresa un monto válido. (4 digitos con 2 decimales)</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Cédula paciente</label>
+                <input id="p_id_cedula" type="text" class="form-control" pattern="^[0-9]{8}$" maxlength="8" required>
+                <div class="invalid-feedback">La cédula debe ser de exactamente 8 dígitos (ej. 20000001).</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Nombre</label>
+                <input id="p_nomp" type="text" class="form-control" required>
+                <div class="invalid-feedback">El nombre es obligatorio.</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Apellido paterno</label>
+                <input id="p_app" type="text" class="form-control" required>
+                <div class="invalid-feedback">El apellido paterno es obligatorio.</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Apellido materno</label>
+                <input id="p_amp" type="text" class="form-control">
+                </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Monto mensual</label>
+                <input id="p_monto_mensual" type="number" step="0.01" min="0" max="9999.99" class="form-control" required>
+                <div class="invalid-feedback">Ingresa un monto mensual válido. (4 digitos con 2 decimales)</div>
+              </div>
+              
+              <div class="col-md-3 mb-3">
+                <label class="form-label">Teléfono</label>
+                <input id="p_telefono" type="text" class="form-control" pattern="^[0-9]{10}$" maxlength="10" required>
+                <div class="invalid-feedback">El teléfono debe tener 10 dígitos numéricos.</div>
+              </div>
+              
             </div>
-            <button class="btn btn-primary">Guardar paciente</button>
+            <button class="btn btn-primary" type="submit">Guardar paciente</button>
           </form>
         </div>
         <div class="table-card mt-4">
